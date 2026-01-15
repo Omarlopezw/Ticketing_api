@@ -21,11 +21,23 @@ describe('User Controller (e2e)', () => {
         if (app) await app.close();
     });
 
+    it('Application should be defined', () => {
+        expect(app).toBeDefined();
+    });
+
     it('User repo should be defined', () => {
         expect(userRepo).toBeDefined();
     })
 
     it('create users | Given valid userPayload When creating a user Then create a user in db and response 201 status', async () => {
+        const expectedResponse = {
+            name: 'test_name',
+            lastname: 'test_lastname',
+            email: 'test@test.com',
+            password: 'test_password',
+            id: 1,
+            isActive: true
+        };
         const userPayload = {
             name: 'test_name',
             lastname: 'test_lastname',
@@ -41,10 +53,10 @@ describe('User Controller (e2e)', () => {
             .expect(201);
 
         const createdUser: User = await userRepo.findOneOrFail({ where: { email: userPayload.mail } });
-        expect(response.body).toHaveProperty('id');
-        expect(response.body.name).toEqual(userPayload.name);
-        expect(response.body.lastname).toEqual(userPayload.lastname);
-        expect(response.body.isActive).toBeTruthy();
+        expect(response.body).toEqual(expectedResponse);
+        expect(createdUser.name).toEqual(userPayload.name);
+        expect(createdUser.lastname).toEqual(userPayload.lastname);
+        expect(createdUser.isActive).toBeTruthy();
         expect(createdUser.email).toEqual(userPayload.mail);
     });
 
