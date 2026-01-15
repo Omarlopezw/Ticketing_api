@@ -14,6 +14,19 @@ services:
     networks:
       - ticketing_network
 
+  postgres_db_test:
+    image: postgres:16
+    container_name: ticketing_postgres_test
+    restart: always
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: ticketing_test
+    ports:
+      - "5433:5432"
+    networks:
+      - ticketing_network
+
   pgadmin:
     image: dpage/pgadmin4
     container_name: ticketing_pgadmin
