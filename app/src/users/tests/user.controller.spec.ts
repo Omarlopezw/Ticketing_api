@@ -57,4 +57,35 @@ describe('User Controller (e2e)', () => {
         expect(createdUser.lastname).toEqual(expectedResponse.lastname);
         expect(createdUser.name).toEqual(expectedResponse.name);
     });
+
+    it('create users | Given incorrect userPayload When creating a user Then return a bad request', async () => {
+        const expectedResponse = {
+            name: 'test_name',
+            lastname: 'test_lastname',
+            email: 'test@test.com',
+            password: 'test_password',
+            id: 1,
+            isActive: true
+        };
+        const userPayload = {
+            email: 'test@test.com',
+            name: 'test_name',
+            password: 'test_password',
+            phone: 1234567890,
+            username: 'test_username',
+            mail: 'test1@test.com'
+        };
+
+        const response = await request(app.getHttpServer())
+            .post('/users')
+            .send(userPayload)
+            .expect(201);
+
+        const createdUser: User = await userRepo.findOneOrFail({ where: { email: userPayload.email } });
+        expect(response.body).toEqual(expectedResponse);
+        expect(createdUser.email).toEqual(expectedResponse.email);
+        expect(createdUser.isActive).toBeTruthy();
+        expect(createdUser.lastname).toEqual(expectedResponse.lastname);
+        expect(createdUser.name).toEqual(expectedResponse.name);
+    });
 });

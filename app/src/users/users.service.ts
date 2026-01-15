@@ -11,6 +11,7 @@ export class UsersService {
 
   create(createUserDto: CreateUserDto) {
     const newUser = this.userReposity.create(createUserDto)
+    console.log('Se ejecuta');
     return this.userReposity.save(newUser);
   }
 
