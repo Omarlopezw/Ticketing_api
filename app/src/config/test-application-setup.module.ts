@@ -1,10 +1,11 @@
 // test/infra/test-db-setup.ts
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppModule } from '../../src/app.module';
+import { AppModule } from '../app.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
 
-export class TestDbSetup {
+export class TestApplicationSetup {
   async init() {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
@@ -28,6 +29,12 @@ export class TestDbSetup {
     }).compile();
 
     const app = moduleFixture.createNestApplication();
+
+    app.useGlobalPipes(new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }));
     
     await app.init();
     

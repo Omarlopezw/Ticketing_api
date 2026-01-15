@@ -9,10 +9,14 @@ import { User } from './entities/user.entity';
 export class UsersService {
   constructor(@InjectRepository(User) private userReposity: Repository<User>) { };
 
-  create(createUserDto: CreateUserDto) {
-    const newUser = this.userReposity.create(createUserDto)
-    console.log('Se ejecuta');
-    return this.userReposity.save(newUser);
+  async create(createUserDto: CreateUserDto) {
+    const newUser = this.userReposity.create({
+      name: createUserDto.name,
+      lastname: createUserDto.lastname,
+      email: createUserDto.mail,
+      password: createUserDto.password
+    })
+    return await this.userReposity.save(newUser);
   }
 
   findAll() {
