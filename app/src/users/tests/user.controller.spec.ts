@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { TestApplicationSetup } from '../../config/test-application-setup.module';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -82,6 +82,28 @@ describe('User Controller (e2e)', () => {
             .post('/users')
             .send(invalidPayload)
             .expect(400);
+
+        expect(response.body).toEqual(expectedResponse);
+    });
+
+    it('delete user | Given a valid user id When deleting user Then delete a user in db and response a 200 status', async () => {
+        const expectedResponse = {
+            affected: 1,
+            raw: []
+        }
+        const userPayload = {
+            name: 'test_name',
+            lastname: 'test_lastname',
+            username: 'test_username',
+            password: 'test_password',
+            mail: 'test@test.com',
+            phone: '+1234567890'
+        }
+        const createdUser: User = await userRepo.findOneOrFail({ where: { email: userPayload.mail } })
+
+        const response = await request(app.getHttpServer())
+            .delete(`/users/${createdUser.id}`)
+            .expect(200)
 
         expect(response.body).toEqual(expectedResponse);
     });
