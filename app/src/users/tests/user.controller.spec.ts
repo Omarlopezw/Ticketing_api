@@ -4,17 +4,20 @@ import { TestApplicationSetup } from '../../config/test-application-setup.module
 import { IsNull, Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { UserTestObejects } from './test_objects/test-objects';
 
 describe('User Controller (e2e)', () => {
     let app: INestApplication;
     let setup: TestApplicationSetup;
     let userRepo: Repository<User>;
+    let userTestObjects: UserTestObejects;
 
     beforeAll(async () => {
         setup = new TestApplicationSetup();
         const result = await setup.init();
         app = result.app;
         userRepo = app.get<Repository<User>>(getRepositoryToken(User));
+        userTestObjects = new UserTestObejects(userRepo);
     }, 30000);
 
     afterAll(async () => {
@@ -86,24 +89,30 @@ describe('User Controller (e2e)', () => {
         expect(response.body).toEqual(expectedResponse);
     });
 
-    it('delete user | Given a valid user id When deleting user Then delete a user in db and response a 200 status', async () => {
+    it('deleteUserGivenValidDataDeletesTheUserAndResponsesStatusOK', async () => {
         const expectedResponse = {
             affected: 1,
             raw: []
-        }
-        const userPayload = {
-            name: 'test_name',
-            lastname: 'test_lastname',
-            username: 'test_username',
-            password: 'test_password',
-            mail: 'test@test.com',
-            phone: '+1234567890'
-        }
-        const createdUser: User = await userRepo.findOneOrFail({ where: { email: userPayload.mail } })
+        };
+        const user = await userTestObjects.getUser();
 
         const response = await request(app.getHttpServer())
-            .delete(`/users/${createdUser.id}`)
-            .expect(200)
+            .delete(`/users/${user.id}`)
+            .expect(200);
+
+        expect(response.body).toEqual(expectedResponse);
+        expect(
+            userRepo.findOneByOrFail({ id: user.id })
+        ).rejects.toThrow();
+    });
+
+    it('deleteUserGivenNonExistentUserReturnsStatusOkNotAffectedRows', async () => {
+        const expectedResponse = {
+            raw: [], affected: 0
+        };
+        const response = await request(app.getHttpServer())
+            .delete(`/users/-1`)
+            .expect(200);
 
         expect(response.body).toEqual(expectedResponse);
     });
