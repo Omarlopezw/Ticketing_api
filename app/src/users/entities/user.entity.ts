@@ -1,5 +1,6 @@
 import { Session } from '../../sessions/entities/session.entity';
-import { Entity, PrimaryGeneratedColumn, Column, Index, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Index, OneToMany, OneToOne } from 'typeorm';
+import { UserData } from './user-data.entity';
 
 @Entity()
 export class User {
@@ -20,6 +21,9 @@ export class User {
 
   @OneToMany(type => Session, session => session.user)
   sessions: Session[];
+
+  @OneToOne(type => UserData, userData => userData.user)
+  userData: UserData;
 
   @Column({ default: true })
   isActive: boolean;
