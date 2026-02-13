@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { DatabaseModule } from './config/pg.module';
 import { ConfigModule } from '@nestjs/config';
+import { SessionModule } from './sessions/sessions.module';
 
 @Module({
   imports: [
@@ -12,7 +13,8 @@ import { ConfigModule } from '@nestjs/config';
       envFilePath: '.env',
     }),
     DatabaseModule,
-    UsersModule
+    UsersModule,
+    SessionModule
   ],
   controllers: [AppController],
   providers: [AppService],

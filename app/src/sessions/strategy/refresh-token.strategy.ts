@@ -6,7 +6,7 @@ import { Request } from 'express';
 import { JwtPayload } from '../types/payload.type';
 
 @Injectable()
-export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
+export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   constructor(config: ConfigService) {
     const configService = config;
     super({

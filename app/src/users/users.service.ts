@@ -4,17 +4,21 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { Hasher } from '../hasher/hash';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(User) private userReposity: Repository<User>) { };
+  constructor(@InjectRepository(User) private userReposity: Repository<User>,
+    private hasher: Hasher) { };
 
   async create(createUserDto: CreateUserDto) {
+    const hashedPassword = await this.hasher.hash(createUserDto.password);
+
     const newUser = this.userReposity.create({
       name: createUserDto.name,
       lastname: createUserDto.lastname,
       email: createUserDto.mail,
-      password: createUserDto.password
+      password: hashedPassword
     })
     return await this.userReposity.save(newUser);
   }

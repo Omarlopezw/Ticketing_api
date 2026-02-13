@@ -1,6 +1,7 @@
 import { config } from 'dotenv';
 import { Session } from "./src/sessions/entities/session.entity";
 import { User } from "./src/users/entities/user.entity";
+import { UserData } from './src/users/entities/user-data.entity';
 import { ConfigService } from "@nestjs/config";
 import { DataSource } from 'typeorm';
 
@@ -19,6 +20,7 @@ export default new DataSource({
   migrations: ['./migrations/*.ts'],
   entities: [
     User,
+    UserData,
     Session
   ],
 });

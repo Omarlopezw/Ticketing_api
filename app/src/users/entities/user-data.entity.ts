@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index, PrimaryColumn, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, JoinColumn,Column, Index, PrimaryColumn, OneToOne } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
@@ -7,6 +7,7 @@ export class UserData {
   id: number;
 
   @OneToOne(type => User, user => user.userData)
+  @JoinColumn()
   user: User;
 
   @Column({ length: 64 })

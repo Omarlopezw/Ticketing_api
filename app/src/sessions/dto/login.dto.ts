@@ -5,7 +5,7 @@ export class LoginDto {
     @IsNotEmpty()
     email: string;
 
-    @IsStrongPassword()
+    //@IsStrongPassword()
     @IsNotEmpty()
     password: string;
 }
